@@ -1,0 +1,41 @@
+#root {
+  font-family: sans-serif;
+  text-align: center;
+  height: 100%;
+}
+
+html {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  top: 0;
+}
+
+p {
+  margin: 0;
+}
+
+.outside {
+  position: relative;
+  height: calc(100% - 20px);
+  width: 400px;
+  margin: auto;
+  padding: 10px;
+}
+
+.list-container {
+  height: calc(100% - 1rem);
+}
+
+.row-data {
+  margin: 0;
+  padding: 0;
+}
+
+.nested-data {
+  padding: 0.2rem;
+}

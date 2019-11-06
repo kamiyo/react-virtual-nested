@@ -1,23 +1,17 @@
 import * as React from "react";
 import { render } from "react-dom";
+import "./styles.css";
 
 import Autosizer from "react-virtualized-auto-sizer";
 import {
-  BaseVirtualList,
   VirtualList,
-  RowCache,
-  RowRendererProps
+  RowRendererProps,
 } from "./VirtualList";
 
 import "./styles.css";
 
 const data = [];
-const caches: RowCache[] = [];
 for (let i = 0; i < 35; ++i) {
-  caches[i] = new RowCache({
-    length: (i % 10) + 2 * i + 5
-    // estimatedRowHeight: 25
-  });
   data[i] = {
     items: Array.from({ length: (i % 10) + 2 * i + 5 }).map(
       (v, ii) => `child ${ii}`
@@ -25,13 +19,13 @@ for (let i = 0; i < 35; ++i) {
   };
 }
 
-class nestedRenderer extends React.PureComponent<
+class NestedRenderer extends React.PureComponent<
   RowRendererProps<number, HTMLDivElement>
-> {
+  > {
   render() {
-    const { data, index, style, parentOffset, innerRef } = this.props;
+    const { data, index, innerRef } = this.props;
     return (
-      <div className="nested-data" style={style} key={index} ref={innerRef}>
+      <div className="nested-data" key={index} ref={innerRef}>
         {data}
       </div>
     );
@@ -40,19 +34,16 @@ class nestedRenderer extends React.PureComponent<
 
 class RowRenderer extends React.PureComponent<
   RowRendererProps<{ items: number[] }, HTMLDivElement>
-> {
+  > {
   render() {
     const {
       index,
-      style,
       innerRef,
       data,
-      scrollTop,
-      parentOffset,
-      height
+      nestedList,
     } = this.props;
     return (
-      <div className="row-data" key={index} style={style} ref={innerRef}>
+      <div className="row-data" key={index} ref={innerRef}>
         <div
           style={{
             backgroundColor: index % 2 ? "#A0A0A0" : "#BBBBBB",
@@ -77,21 +68,14 @@ class RowRenderer extends React.PureComponent<
           >
             {index}
           </div>
-          <BaseVirtualList
-            data={data.items}
-            rowCache={caches[index]}
-            rowRenderer={nestedRenderer}
-            scrollTop={scrollTop}
-            parentOffset={parentOffset}
-            height={height}
-          />
+          {nestedList}
         </div>
       </div>
     );
   }
 }
 
-const loadMore = async () => {};
+const loadMore = async () => { };
 
 const App: React.FC<{}> = props => {
   return (
@@ -104,8 +88,10 @@ const App: React.FC<{}> = props => {
               <VirtualList
                 height={height}
                 data={data}
-                estimatedRowHeight={60}
-                rowRenderer={RowRenderer}
+                estimatedRowHeights={60}
+                levels={2}
+                dataKeys={['items']}
+                rowRenderers={[RowRenderer, NestedRenderer]}
               />
             );
           }}
